@@ -1,31 +1,45 @@
 from app import db
 from datetime import datetime 
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from app import login 
 
-class User(db.Model):
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True) 
-    email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    calendar = db.relationship('Calendar')
+    has_calendar = db.Column(db.Boolean)
+    calendar = db.relationship('Calendar', backref='user')
 
     def __repr__(self): 
         return 'User {}'.format(self.username)
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password): 
+        return check_password_hash(self.password_hash, password)
 
 class Calendar(db.Model): 
     id = db.Column(db.Integer, primary_key=True) 
-    start_date = db.Column(db.DateTime, default=datetime.utcnow())
-    end_date = db.Column(db.DateTime, default=datetime.utcnow())
+    start_date = db.Column(db.String(64))
+    end_date = db.Column(db.String(64))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    weeks = db.relationship('Week')
+    weeks = db.relationship('Week', backref='calendar')
 
 class Week(db.Model): 
     id = db.Column(db.Integer, primary_key=True) 
     week_name = db.Column(db.String(64))
     calendar_id = db.Column(db.Integer, db.ForeignKey('calendar.id'))
-    list_of_todos = db.relationship('ToDoItem')
+    list_of_todos = db.relationship('ToDoItem', back_populates='week')
 
 class ToDoItem(db.Model): 
     id = db.Column(db.Integer, primary_key=True) 
     description = db.Column(db.String(128))
     week_id = db.Column(db.Integer, db.ForeignKey('week.id'))
+    week = db.relationship('Week', back_populates='list_of_todos')
 
