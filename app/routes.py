@@ -1,10 +1,9 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, NewCalendarForm
-from app.models import User 
+from app.models import User, Calendar
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.urls import url_parse
-from app.calendar import SemCalendar
 
 @app.route('/')
 @app.route('/index')
@@ -18,8 +17,8 @@ def calendar():
         return render_template('calendar.html', title='Calendar')
     calendar_form = NewCalendarForm()
     if calendar_form.validate_on_submit(): 
-        user_calendar = SemCalendar(calendar_form.start_date, calendar_form.end_date, 
-                                 calendar_form.break_start, calendar_form.break_end)
+        user_calendar = Calendar(calendar_form.start_date.data, calendar_form.end_date.data, 
+                                 calendar_form.break_start.data, calendar_form.break_end.data)
         
     return render_template('new_calendar.html', title='Create calendar', form=calendar_form)
 
