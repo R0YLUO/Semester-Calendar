@@ -6,6 +6,17 @@
 
     <body>
         <h1>{{week.week_name}} Overview</h1>
+        {% for todo in week.todoitems %}
+        <p>
+            <input type="checkbox">
+            {{ todo.description }}
+            <a href="{{ url_for('delete', todo_id=todo.id, week_id=week.id) }}"> Delete </a>
+        </p>
+        {% endfor %}
+        <form action="/add/{{ week.id }}" method="POST">
+            <input type="text" name="todoitem"> 
+            <input type="submit"> 
+        </form>
     </body>
 </html>
 {% endblock %}

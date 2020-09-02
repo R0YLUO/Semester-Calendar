@@ -64,7 +64,21 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
-@app.route('/view_week/<week_id>', methods=['GET', 'POST'])
+@app.route('/view_week/<int:week_id>', methods=['GET', 'POST'])
 def view_week(week_id): 
     week = Week.query.get(week_id)
     return render_template('week.html', title='Week Overview', week=week)
+
+@app.route('/add/<int:week_id>', methods=['GET', 'POST'])
+def add(week_id): 
+    todo = ToDoItem(description=request.form['todoitem'], week_id=week_id)
+    db.session.add(todo) 
+    db.session.commit() 
+    return redirect(url_for('view_week', week_id=week_id))
+
+@app.route('/delete/<int:todo_id>/<int:week_id>', methods=['GET', 'POST'])
+def delete(todo_id, week_id): 
+    todo = ToDoItem.query.get(todo_id)
+    db.session.delete(todo)
+    db.session.commit() 
+    return redirect(url_for('view_week', week_id=week_id))
