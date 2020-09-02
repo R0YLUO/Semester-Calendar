@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, NewCalendarForm
-from app.models import User, Calendar
+from app.models import User, Calendar, Week, ToDoItem
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.urls import url_parse
 
@@ -13,13 +13,19 @@ def index():
 @app.route('/calendar', methods=['GET', 'POST'])
 @login_required
 def calendar():
-    if current_user.has_calendar: 
-        return render_template('calendar.html', title='Calendar')
     calendar_form = NewCalendarForm()
+    if len(current_user.calendars) != 0: 
+        return render_template('calendar.html', title='Calendar', calendar=current_user.calendars[0])
     if calendar_form.validate_on_submit(): 
-        user_calendar = Calendar(calendar_form.start_date.data, calendar_form.end_date.data, 
-                                 calendar_form.break_start.data, calendar_form.break_end.data)
-        
+        user_calendar = Calendar(start_date=calendar_form.start_date.data, end_date=calendar_form.end_date.data, 
+                                 break_start=calendar_form.break_start.data, break_end=calendar_form.break_end.data, 
+                                 user_id=current_user.id)
+        db.session.add(user_calendar) 
+        db.session.commit() 
+        user_calendar = current_user.calendars[0]
+        user_calendar.create_weeks()
+        flash('Congratulations, you have sucessfully created a calendar!')
+        return redirect(url_for('calendar'))
     return render_template('new_calendar.html', title='Create calendar', form=calendar_form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -50,10 +56,15 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, has_calendar=False)
+        user = User(username=form.username.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/view_week/<week_id>', methods=['GET', 'POST'])
+def view_week(week_id): 
+    week = Week.query.get(week_id)
+    return render_template('week.html', title='Week Overview', week=week)

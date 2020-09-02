@@ -50,7 +50,7 @@ class Calendar(db.Model):
             break_week = Week(week_name="Break Week "+str(break_num), calendar_id=self.id)
             db.session.add(break_week)
     
-        for week_num in range(weeks_first_half + 1, weeks_first_half + 1 + weeks_second_half + 1): 
+        for week_num in range(weeks_first_half + 1, weeks_first_half + weeks_second_half + 1): 
             week = Week(week_name="Week "+str(week_num), calendar_id=self.id)
             db.session.add(week) 
         db.session.commit() 

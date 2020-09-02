@@ -1,5 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<head>
+    <style>    
+        .row {
+        display: flex;
+        }
+        .column {
+        flex: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="column">
+            {% for week in calendar.weeks %}   
+            <div>
+                {{ week.week_name }}
+                <a href="{{ url_for('view_week', week_id=week.id) }}">View week</a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="column">
+            <div class="row">
+                <h1>
+                    Things due this week:
+                </h1>
+            </div>
+            <div class="row">
+                <h1>
+                    Things due next week:
+                </h1>
+            </div>
+        </div>
+    </div>
+</body>
 {% endblock %}
