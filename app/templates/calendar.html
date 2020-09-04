@@ -12,6 +12,15 @@
     </style>
 </head>
 <body>
+    <div>
+        {% if 0 > this_week_index %}
+        <h1>Semester has not started yet!</h1>
+        {% elif calendar.weeks|length > this_week_index %}
+        <h1>You are in {{ calendar.weeks[this_week_index].week_name }}</h1>
+        {% else %} 
+        <h1>Congratulations, you have finished this semester.</h1>
+        {% endif %}
+    </div> 
     <div class="row">
         <div class="column">
             {% for week in calendar.weeks %}   
@@ -26,11 +35,25 @@
                 <h1>
                     Things due this week:
                 </h1>
+                <ul>
+                    {% if calendar.weeks|length > this_week_index and this_week_index >= 0 %}
+                    {% for todo in calendar.weeks[this_week_index].todoitems %}
+                    <li>{{ todo.description }}</li>
+                    {% endfor %}
+                    {% endif %}
+                </ul>
             </div>
             <div class="row">
                 <h1>
                     Things due next week:
                 </h1>
+                <ul>
+                    {% if calendar.weeks|length > this_week_index + 1 and this_week_index + 1 >= 0 %}
+                    {% for todo in calendar.weeks[this_week_index + 1].todoitems %}
+                    <li>{{ todo.description }}</li>
+                    {% endfor %}
+                    {% endif %}
+                </ul> 
             </div>
         </div>
     </div>

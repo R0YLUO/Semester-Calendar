@@ -4,6 +4,7 @@ from app.forms import LoginForm, RegistrationForm, NewCalendarForm
 from app.models import User, Calendar, Week, ToDoItem
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.urls import url_parse
+from datetime import datetime
 
 @app.route('/')
 @app.route('/index')
@@ -15,7 +16,11 @@ def index():
 def calendar():
     calendar_form = NewCalendarForm()
     if len(current_user.calendars) != 0: 
-        return render_template('calendar.html', title='Calendar', calendar=current_user.calendars[0])
+        calendar = current_user.calendars[0]
+        start_date = calendar.start_date
+        today = datetime.now()
+        this_week_index = (today - start_date).days // 7
+        return render_template('calendar.html', title='Calendar', calendar=calendar, this_week_index=this_week_index)
     if calendar_form.validate_on_submit(): 
         user_calendar = Calendar(start_date=calendar_form.start_date.data, end_date=calendar_form.end_date.data, 
                                  break_start=calendar_form.break_start.data, break_end=calendar_form.break_end.data, 
