@@ -5,9 +5,14 @@ from flask_migrate import Migrate
 from sqlalchemy import MetaData
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+import os 
+import urllib.parse
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+db_string = os.environ['dbstring']
+params = urllib.parse.quote_plus(db_string)
 
 bootstrap = Bootstrap(app)
 
