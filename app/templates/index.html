@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <h1>Welcome to the semester calendar!</h1>
+{% block page_content %}
+<h1>Welcome to the semester calendar!</h1><br>
+{% if current_user.is_anonymous %}
+<a href="{{ url_for('login') }}">
+    <button type="button">Login</button>
+</a><br><br>
+<a href="{{ url_for('register') }}">
+    <button type="button">Register</button>
+</a>
+{% else %}
+<a href="{{ url_for('calendar') }}">
+    <button type="button">Go to calendar</button>
+</a>
+{% endif %}
+
 {% endblock %}

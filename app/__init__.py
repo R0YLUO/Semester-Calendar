@@ -4,9 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy import MetaData
 from flask_login import LoginManager
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+bootstrap = Bootstrap(app)
 
 naming_convention = {
     "ix": 'ix_%(column_0_label)s',

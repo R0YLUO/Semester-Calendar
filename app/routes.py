@@ -29,7 +29,6 @@ def calendar():
         db.session.commit() 
         user_calendar = current_user.calendars[0]
         user_calendar.create_weeks()
-        flash('Congratulations, you have sucessfully created a calendar!')
         return redirect(url_for('calendar'))
     return render_template('new_calendar.html', title='Create calendar', form=calendar_form)
 
@@ -65,7 +64,6 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -87,3 +85,14 @@ def delete(todo_id, week_id):
     db.session.delete(todo)
     db.session.commit() 
     return redirect(url_for('view_week', week_id=week_id))
+
+@app.route('/delete_calendar/<int:calendar_id>', methods=['GET', 'POST']) 
+def delete_calendar(calendar_id): 
+    calendar = Calendar.query.get(calendar_id) 
+    for week in calendar.weeks: 
+        for todo in week.todoitems:
+            db.session.delete(todo)
+        db.session.delete(week)
+    db.session.delete(calendar)
+    db.session.commit()
+    return redirect(url_for('calendar')) 

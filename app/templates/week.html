@@ -1,22 +1,17 @@
-{% block content %}
-<html>
-    <head>
+{% extends "base.html" %}
 
-    </head>
+{% block page_content %}
+    <a href="{{ url_for('calendar') }}"> Back to calendar </a>
+    <h1>{{week.week_name}} Overview</h1>
+    {% for todo in week.todoitems %}
+    <p>
+        {{ todo.description }}
+        <a href="{{ url_for('delete', todo_id=todo.id, week_id=week.id) }}"> Delete </a>
+    </p>
+    {% endfor %}
+    <form action="/add/{{ week.id }}" method="POST">
+        <input type="text" name="todoitem" placeholder="Enter something due this week" style="border: none;border-bottom: 1px solid;width: 20%"> 
+        <input type="submit" value="Add"> 
+    </form>
 
-    <body>
-        <a href="{{ url_for('calendar') }}"> Back to calendar </a>
-        <h1>{{week.week_name}} Overview</h1>
-        {% for todo in week.todoitems %}
-        <p>
-            {{ todo.description }}
-            <a href="{{ url_for('delete', todo_id=todo.id, week_id=week.id) }}"> Delete </a>
-        </p>
-        {% endfor %}
-        <form action="/add/{{ week.id }}" method="POST">
-            <input type="text" name="todoitem"> 
-            <input type="submit"> 
-        </form>
-    </body>
-</html>
 {% endblock %}

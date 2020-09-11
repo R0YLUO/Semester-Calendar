@@ -1,33 +1,50 @@
-<html>
-    <head>
-      {% if title %}
-      <title>{{ title }} - Semester Calendar</title>
-      {% else %}
-      <title>Welcome to Semester Calendar</title>
-      {% endif %}
-    </head>
-    <body>
-        <div>
-            Navigate: 
-            <a href="{{ url_for('index') }}">Home</a> 
-            {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login') }}">Login</a>
-            <a href="{{ url_for('register') }}">Register</a>
-            {% else %}
-            <a href="{{ url_for('calendar') }}">Go to calendar</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-            {% endif %}
-        </div>
-        <hr>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %} 
-        {% endwith %}
-        {% block content %}{% endblock %}
-    </body>
-</html>
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+{% if title %}
+{{ title }} - Semester Calendar
+{% else %}
+Welcome to Semester Calendar
+{% endif %}
+{% endblock %}
+
+{% block navbar %}
+<style>
+    div {
+        padding-left: 10px;
+    }
+
+    html,
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+</style>
+<nav class="navbar navbar-default">
+    Navigate:
+    <a href="{{ url_for('index') }}">Home</a>
+    {% if current_user.is_anonymous %}
+    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('register') }}">Register</a>
+    {% else %}
+    <a href="{{ url_for('calendar') }}">Go to calendar</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<hr>
+<div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
